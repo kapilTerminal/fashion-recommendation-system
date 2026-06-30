@@ -9,3 +9,6 @@ __pycache__/
 
 # Python compiled files
 *.pyc
+
+# temporary image of user
+uploads/

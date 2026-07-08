@@ -1,0 +1,13 @@
+# ==========================================================
+# Fashion Recommendation System
+# Data Processing Requirements
+# ==========================================================
+
+# Data manipulation
+pandas==2.3.1
+
+# Image processing
+Pillow==11.3.0
+
+# Progress bars
+tqdm==4.67.1

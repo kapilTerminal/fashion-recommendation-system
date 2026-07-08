@@ -117,7 +117,22 @@ for article in tqdm(df["articleType"]):
 df["style"] = styles
 df["occasion"] = occasions
 
+
+# ==========================================================
+# REMOVE UNUSED COLUMNS
+# ==========================================================
+
+if "year" in df.columns:
+    df.drop(columns=["year"], inplace=True)
+    print("\nRemoved column: year")
+
+
+# ==========================================================
+# SAVE UPDATED CSV
+# ==========================================================
+
 df.to_csv(CSV_PATH, index=False)
+
 
 # ==========================================================
 # REPORT
@@ -144,6 +159,7 @@ with open(REPORT_FILE, "w", encoding="utf-8") as f:
 
     for occasion, count in df["occasion"].value_counts().items():
         f.write(f"{occasion:<15}{count}\n")
+
 
 print("\nMetadata enrichment completed successfully.")
 print(f"\nUpdated CSV : {CSV_PATH}")

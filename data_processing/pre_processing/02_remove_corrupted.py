@@ -58,7 +58,7 @@ for _, row in df.iterrows():
         continue
 
     try:
-        with Image.open(image_path) as img:
+        with Image.open(image_path) as img:       
             img.verify()
 
         shutil.copy2(image_path, CLEAN_IMAGES / image_path.name)

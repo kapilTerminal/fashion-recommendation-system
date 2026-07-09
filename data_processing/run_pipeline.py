@@ -16,9 +16,10 @@ SCRIPTS = [
     BASE_DIR / "pre_processing" / "01_inspect_dataset.py",
     BASE_DIR / "pre_processing" / "02_remove_corrupted.py",
     BASE_DIR / "pre_processing" / "03_remove_duplicates.py",
-    BASE_DIR / "pre_processing" / "04_filter_categories.py",
-    BASE_DIR / "pre_processing" / "05_enrich_metadata.py",
-    BASE_DIR / "pre_processing" / "06_resize_images.py",
+    BASE_DIR / "pre_processing" / "04_handle_missing_values.py",
+    BASE_DIR / "pre_processing" / "05_filter_categories.py",
+    BASE_DIR / "pre_processing" / "06_enrich_metadata.py",
+    BASE_DIR / "pre_processing" / "07_resize_images.py",
 ]
 
 

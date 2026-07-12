@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block title %}About — FashionAI{% endblock %}
+{% block meta_description %}Learn about the FASHION RECOMMENDATION SYSTEM — technologies, objectives, and
+team.{% endblock %}
+
+{% block content %}
+<div class="about-page">
+    <div class="about-container">
+        <!-- Header -->
+        <div style="text-align:center;margin-bottom:60px">
+            <span class="section-tag">Minor Project</span>
+            <h1 class="section-title serif" style="margin-top:12px">FASHION RECOMMENDATION SYSTEM</h1>
+            <p style="font-size:16px;color:var(--text-muted);max-width:600px;margin:20px auto;line-height:1.8">
+                A minor project that harnesses the power of deep learning and collaborative filtering to deliver
+                personalized, FASHION RECOMMENDATION SYSTEM outfit recommendations powered by Smart Technology.
+            </p>
+        </div>
+
+        <!-- Description -->
+        <div
+            style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px;margin-bottom:48px">
+            <h2 style="font-size:22px;font-weight:700;margin-bottom:16px">📌 Project Overview</h2>
+            <p style="font-size:15px;color:var(--text-secondary);line-height:1.8;margin-bottom:16px">
+                The <strong>FASHION RECOMMENDATION SYSTEM</strong> addresses the challenge of outfit
+                discovery
+                by combining image recognition with user preference modeling. Users can upload a reference outfit image
+                which is processed by a <strong>ResNet50</strong> convolutional neural network to extract visual feature
+                vectors.
+            </p>
+            <p style="font-size:15px;color:var(--text-secondary);line-height:1.8">
+                These features, combined with user profile attributes (occasion, gender, season), are fed into a
+                <strong>K-Nearest Neighbors (KNN)</strong> classifier and enhanced with <strong>Collaborative
+                    Filtering</strong>
+                to surface outfits that similar users have loved — creating a personalized, intelligent wardrobe
+                assistant.
+            </p>
+        </div>
+
+        <!-- Features -->
+        <div style="margin-bottom:48px">
+            <h2 style="font-size:22px;font-weight:700;margin-bottom:8px">✦ Supported Occasions</h2>
+            <p style="color:var(--text-muted);font-size:14px;margin-bottom:24px">Get outfit recommendations tailored to
+                your occasion</p>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon">👗</div>
+                    <div class="tech-name">Casual</div>
+                    <div class="tech-role">Everyday Wear</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon">👔</div>
+                    <div class="tech-name">Formal</div>
+                    <div class="tech-role">Office & Business</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon">🪩</div>
+                    <div class="tech-name">Party</div>
+                    <div class="tech-role">Celebrations</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon">💍</div>
+                    <div class="tech-name">Wedding</div>
+                    <div class="tech-role">Special Events</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon">🏃</div>
+                    <div class="tech-name">Sporty</div>
+                    <div class="tech-role">Active & Athletic</div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Objectives -->
+        <div style="margin-bottom:48px">
+            <h2 style="font-size:22px;font-weight:700;margin-bottom:24px">🎯 Project Objectives</h2>
+            <div class="objective-list">
+                <div class="objective-item">
+                    <div class="objective-num">1</div>
+                    <div class="objective-text">Design and implement a <strong>deep learning pipeline</strong> using
+                        ResNet50 to extract meaningful visual features from fashion images.</div>
+                </div>
+                <div class="objective-item">
+                    <div class="objective-num">2</div>
+                    <div class="objective-text">Build a <strong>KNN-based recommendation engine</strong> that finds
+                        similar outfits based on extracted feature vectors and user-defined filters.</div>
+                </div>
+                <div class="objective-item">
+                    <div class="objective-num">3</div>
+                    <div class="objective-text">Implement <strong>Collaborative Filtering</strong> to leverage community
+                        preferences and improve recommendation personalization over time.</div>
+                </div>
+                <div class="objective-item">
+                    <div class="objective-num">4</div>
+                    <div class="objective-text">Develop a <strong>full-stack web application</strong> with Django,
+                        providing user authentication, outfit browsing, image upload, and a personal dashboard.</div>
+                </div>
+                <div class="objective-item">
+                    <div class="objective-num">5</div>
+                    <div class="objective-text">Deliver an accessible, <strong>responsive UI</strong> with dark mode,
+                        smooth animations, and an intuitive user experience.</div>
+                </div>
+                <div class="objective-item">
+                    <div class="objective-num">6</div>
+                    <div class="objective-text">Evaluate and benchmark recommendation accuracy, ensuring match
+                        percentages reflect genuine stylistic similarity.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div
+            style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px;text-align:center;margin-bottom:48px">
+            <h2 style="font-size:20px;font-weight:700;margin-bottom:24px">🏗 System Architecture</h2>
+            <div style="display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;font-size:13px">
+                {% for step in "123456"|make_list %}
+                <div
+                    style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px 12px;width:130px;text-align:center">
+                    {% if step == '1' %}<div style="font-size:24px;margin-bottom:8px">👤</div>
+                    <div style="font-weight:700">User Input</div>
+                    <div style="color:var(--text-muted);font-size:11px;margin-top:4px">Image / Filters</div>
+                    {% elif step == '2' %}<div style="font-size:24px;margin-bottom:8px">🖼️</div>
+                    <div style="font-weight:700">Preprocessing</div>
+                    <div style="color:var(--text-muted);font-size:11px;margin-top:4px">Resize</div>
+                    {% elif step == '3' %}<div style="font-size:24px;margin-bottom:8px">🧠</div>
+                    <div style="font-weight:700">ResNet50</div>
+                    <div style="color:var(--text-muted);font-size:11px;margin-top:4px">Feature Vectors</div>
+                    {% elif step == '4' %}<div style="font-size:24px;margin-bottom:8px">📍</div>
+                    <div style="font-weight:700">KNN Search</div>
+                    <div style="color:var(--text-muted);font-size:11px;margin-top:4px">Similar Items</div>
+                    {% elif step == '5' %}<div style="font-size:24px;margin-bottom:8px">🤝</div>
+                    <div style="font-weight:700">Collab. Filter</div>
+                    <div style="color:var(--text-muted);font-size:11px;margin-top:4px">Personalize</div>
+                    {% elif step == '6' %}<div style="font-size:24px;margin-bottom:8px">✨</div>
+                    <div style="font-weight:700">Results</div>
+                    <div style="color:var(--text-muted);font-size:11px;margin-top:4px">Ranked Outfits</div>
+                    {% endif %}
+                </div>
+                {% if not forloop.last %}
+                <div style="padding:0 6px;font-size:18px;color:var(--accent);font-weight:700">→</div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div style="text-align:center">
+            <h3 class="serif" style="font-size:28px;margin-bottom:16px">Ready to find your perfect outfit?</h3>
+            <a href="{% url 'recommend' %}" class="btn btn-primary btn-lg">Try It Now →</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

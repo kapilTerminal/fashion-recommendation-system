@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fashion Recommendation System</title>
+  <meta name="description" content="Smart personalized outfit suggestions tailored to your style, occasion, and season." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="static/css/main.css" />
+  <style>
+    /* ── SPA pages ── */
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+
+    /* ── Outfit grid ── */
+    .outfit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+    .outfit-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+      cursor: pointer;
+    }
+    .outfit-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .outfit-card-img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      background: var(--bg-tertiary);
+      display: block;
+    }
+    .outfit-card-body { padding: 16px; }
+    .outfit-card-name { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+    .outfit-card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px; }
+    .outfit-card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .outfit-card-tag {
+      font-size: 11px; padding: 3px 10px; border-radius: 20px;
+      background: var(--bg-tertiary); color: var(--text-muted); font-weight: 500;
+    }
+    .outfit-card-tag.occ { background: var(--accent-light); color: var(--accent-hover); }
+
+    /* ── Hero collage images ── */
+    .collage-main img,
+    .collage-secondary img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+
+    /* ── Filter bar ── */
+    .filter-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 8px; }
+    .filter-bar .form-group { margin-bottom: 0; min-width: 150px; }
+    .no-results { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+
+    /* ── Auth ── */
+    .auth-page { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 40px 16px; }
+    .auth-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; width: 100%; max-width: 420px; box-shadow: var(--shadow-md); }
+    .auth-logo { text-align: center; margin-bottom: 28px; }
+    .auth-title { font-family: var(--font-serif); font-size: 26px; margin: 8px 0 4px; }
+    .auth-subtitle { color: var(--text-muted); font-size: 14px; }
+    .auth-footer { text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-muted); }
+    .auth-footer a { color: var(--accent); font-weight: 600; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ── Steps (How it works) ── */
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-top: 40px; }
+    .step-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 28px 24px; }
+    .step-num { font-size: 40px; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 12px; font-family: var(--font-serif); }
+    .step-card h3 { font-size: 17px; margin-bottom: 8px; }
+    .step-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ── Toast ── */
+    .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+    .toast { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 18px; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow-md); font-size: 14px; animation: slideIn .3s ease; }
+    .toast-success { border-left: 4px solid #22c55e; }
+    .toast-error   { border-left: 4px solid #ef4444; }
+    .toast button  { background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 16px; }
+    @keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════ NAVBAR ══════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="#" class="nav-logo" onclick="showPage('home');return false;">
+      <span class="logo-text">FASHION RECOMMENDATION SYSTEM</span>
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#" class="nav-link active" id="nav-home"  onclick="showPage('home');return false;">Home</a></li>
+      <li><a href="#" class="nav-link"        id="nav-rec"   onclick="showPage('recommend');return false;">Recommendations</a></li>
+      <li><a href="#" class="nav-link"        id="nav-about" onclick="showPage('about');return false;">About</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <!-- Search -->
+      <div class="nav-search" id="navSearch">
+        <input type="text" placeholder="Search outfits…" id="globalSearch" autocomplete="off" oninput="handleSearch(this.value)" />
+        <button class="search-btn" id="searchToggle" aria-label="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <div class="search-results" id="searchResults"></div>
+      </div>
+
+      <!-- Dark mode -->
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <span class="sun-icon">☀️</span>
+        <span class="moon-icon">🌙</span>
+      </button>
+
+      <a href="#" class="btn btn-outline btn-sm" onclick="showPage('login');return false;">Login</a>
+      <a href="#" class="btn btn-primary btn-sm" onclick="showPage('signup');return false;">Sign Up</a>
+
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════ MAIN ══════════════════════ -->
+<main class="main-content">
+
+  <!-- ═══════════════ HOME ═══════════════ -->
+  <div id="page-home" class="page-section active">
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+            FASHION RECOMMENDATION SYSTEM
+          </div>
+          <h1 class="hero-title serif">
+            Your Style,<br>Perfected by <span class="accent">Design</span>
+          </h1>
+          <p class="hero-subtitle">
+            Discover your perfect outfit with our smart system. Personalized
+            suggestions based on your occasion, gender, and unique style.
+          </p>
+          <div class="hero-cta">
+            <a href="#" class="btn btn-primary btn-lg" onclick="showPage('recommend');return false;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              Get Recommendations
+            </a>
+            <a href="#how-it-works" class="btn btn-outline btn-lg">How It Works</a>
+          </div>
+        </div>
+
+        <!-- Hero collage – shirt product images -->
+        <div class="hero-visuals">
+          <div class="hero-collage">
+            <div class="collage-main float-anim-1">
+              <img src="static/images/shirt_navy.png" alt="Navy Casual Shirt">
+            </div>
+            <div class="collage-secondary collage-top float-anim-2">
+              <img src="static/images/shirt_maroon.png" alt="Maroon Overshirt">
+            </div>
+            <div class="collage-secondary collage-bottom float-anim-3">
+              <img src="static/images/shirt_lightblue.png" alt="Light Blue Shirt">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section features-section" id="features">
+      <div class="container">
+        <div class="section-header text-center">
+          <span class="section-tag">Core Features</span>
+          <h2 class="section-title serif">What Our System Can Do</h2>
+          <p class="section-subtitle" style="margin:0 auto">Powered by ResNet50 deep learning to deliver premium fashion intelligence.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Smart Recommendations</h3>
+            <p>AI-powered outfit suggestions tailored to your occasion, gender, and personal style preferences.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📸</div>
+            <h3>Image Recognition</h3>
+            <p>ResNet50 model extracts deep visual features to find the most similar fashion items.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3>Multi-Filter Search</h3>
+            <p>Filter by occasion, gender, style type, and color to find exactly what you need.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📐</div>
+            <h3>KNN Matching</h3>
+            <p>K-Nearest Neighbors algorithm finds visually and contextually similar outfit matches.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section how-section" id="how-it-works">
+      <div class="container">
+        <div class="section-header text-center">
+          <span class="section-tag">Process</span>
+          <h2 class="section-title serif">How It Works</h2>
+        </div>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-num">01</div>
+            <h3>Choose Your Occasion</h3>
+            <p>Select from Casual, Formal, Party, Wedding, Sporty, or Traditional occasions.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">02</div>
+            <h3>Set Preferences</h3>
+            <p>Pick your gender and style type for personalized, tailored results.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">03</div>
+            <h3>Get Results</h3>
+            <p>Our KNN algorithm instantly returns the best matching outfits from our curated dataset.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED OUTFITS CAROUSEL -->
+    <section class="section carousel-section" id="preview">
+      <div class="container">
+        <div class="section-header flex-between" style="margin-bottom:40px">
+          <h2 class="section-title serif" style="margin:0">Featured Outfits</h2>
+          <a href="#" class="btn btn-outline" onclick="showPage('recommend');return false;">Explore All →</a>
+        </div>
+      </div>
+      <div class="carousel-viewport" id="carouselViewport" role="region" aria-label="Outfit carousel">
+        <div class="carousel-track" id="carouselTrack"></div>
+      </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <section class="cta-banner-section">
+      <div class="container">
+        <div class="cta-banner-inner">
+          <div class="cta-banner-content">
+            <span class="section-tag" style="color:rgba(200,169,110,.9);background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.25)">Get Started</span>
+            <h2 class="serif" style="font-size:clamp(28px,4vw,48px);color:#fff;margin:16px 0 12px;line-height:1.15">
+              Your Style,<br><span style="color:var(--accent)">Perfected by Design</span>
+            </h2>
+            <p style="color:rgba(255,255,255,.6);max-width:480px;margin:0 auto 36px;font-size:16px;line-height:1.7">
+              Set your preferences and let our Smart AI do the styling — in seconds.
+            </p>
+            <div class="flex-center gap-16">
+              <a href="#" class="btn btn-accent btn-lg" onclick="showPage('recommend');return false;">Find My Outfit</a>
+              <a href="#" class="btn btn-sm" style="color:#fff;border:1px solid rgba(255,255,255,.3)" onclick="showPage('signup');return false;">Sign Up Free</a>
+            </div>
+          </div>
+          <div class="cta-banner-deco" aria-hidden="true">
+            <div class="deco-circle deco-1"></div>
+            <div class="deco-circle deco-2"></div>
+            <div class="deco-circle deco-3"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div><!-- /home -->
+
+
+  <!-- ═══════════════ RECOMMENDATIONS ═══════════════ -->
+  <div id="page-recommend" class="page-section">
+    <div class="recommend-page">
+      <div class="recommend-container">
+        <div class="recommend-header">
+          <h1 class="serif" style="font-size:clamp(28px,4vw,44px);margin-top:8px">Find Your Perfect Outfit</h1>
+          <p style="color:var(--text-muted);margin-top:8px">Filter by occasion, gender, and style</p>
+        </div>
+
+        <div class="filter-panel">
+          <h3 class="filter-title">🎨 Customize Your Style</h3>
+          <div class="filter-bar">
+            <div class="form-group">
+              <label class="form-label" for="fOcc">Occasion</label>
+              <select id="fOcc" class="form-control" onchange="filterOutfits()">
+                <option value="">All Occasions</option>
+                <option value="casual">Casual</option>
+                <option value="formal">Formal</option>
+                <option value="party">Party</option>
+                <option value="wedding">Wedding</option>
+                <option value="sporty">Sporty</option>
+                <option value="traditional">Traditional</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fGen">Gender</label>
+              <select id="fGen" class="form-control" onchange="filterOutfits()">
+                <option value="">All</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="U">Unisex</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fStyle">Style</label>
+              <select id="fStyle" class="form-control" onchange="filterOutfits()">
+                <option value="">All Styles</option>
+                <option value="minimalist">Minimalist</option>
+                <option value="bold">Bold</option>
+                <option value="classic">Classic</option>
+                <option value="trendy">Trendy</option>
+              </select>
+            </div>
+            <button class="btn btn-outline" onclick="resetFilters()">Clear Filters</button>
+          </div>
+        </div>
+
+        <div id="outfitGrid" class="outfit-grid"></div>
+
+        <div id="noResults" class="no-results" style="display:none">
+          <p style="font-size:48px;margin-bottom:12px">👗</p>
+          <h3>No outfits found</h3>
+          <p style="margin-top:8px;color:var(--text-muted)">Try different filters</p>
+          <button class="btn btn-primary" style="margin-top:20px" onclick="resetFilters()">Clear Filters</button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /recommend -->
+
+
+  <!-- ═══════════════ ABOUT ═══════════════ -->
+  <div id="page-about" class="page-section">
+    <div style="max-width:860px;margin:0 auto;padding:60px 24px">
+      <div class="section-header text-center" style="margin-bottom:48px">
+        <span class="section-tag">About</span>
+        <h1 class="section-title serif">Fashion Recommendation System</h1>
+        <p class="section-subtitle" style="margin:0 auto">A Smart Minor Project</p>
+      </div>
+      <div style="display:grid;gap:24px">
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>AI-Powered Engine</h3>
+          <p>Built on ResNet50 deep learning model pre-trained on ImageNet. Extracts 2048-dimensional feature vectors from fashion images and uses K-Nearest Neighbors (KNN) for similarity matching.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Technology Stack</h3>
+          <p>Python · Django · ResNet50 · KNN · SQLite · HTML / CSS / JavaScript</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎓</div>
+          <h3>Minor Project</h3>
+          <p>Developed to demonstrate the application of computer vision and machine learning in the fashion industry for personalized styling recommendations.</p>
+        </div>
+      </div>
+    </div>
+  </div><!-- /about -->
+
+
+  <!-- ═══════════════ LOGIN ═══════════════ -->
+  <div id="page-login" class="page-section">
+    <div class="auth-page">
+      <div class="auth-card">
+        <div class="auth-logo">
+          <h1 class="auth-title serif">Welcome Back</h1>
+          <p class="auth-subtitle">Sign in to get your personalized recommendations</p>
+        </div>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label" for="loginEmail">Email Address</label>
+            <input id="loginEmail" type="email" class="form-control" placeholder="you@example.com" required autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="loginPassword">Password</label>
+            <input id="loginPassword" type="password" class="form-control" placeholder="••••••••" required />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px">Sign In →</button>
+        </form>
+        <p class="auth-footer">Don't have an account? <a href="#" onclick="showPage('signup');return false;">Sign up free</a></p>
+      </div>
+    </div>
+  </div><!-- /login -->
+
+
+  <!-- ═══════════════ SIGNUP ═══════════════ -->
+  <div id="page-signup" class="page-section">
+    <div class="auth-page">
+      <div class="auth-card">
+        <div class="auth-logo">
+          <span style="font-size:32px">✨</span>
+          <h1 class="auth-title serif">Create Account</h1>
+          <p class="auth-subtitle">Join FashionAI for personalized style recommendations</p>
+        </div>
+        <form id="signupForm" onsubmit="handleSignup(event)">
+          <div class="two-col">
+            <div class="form-group">
+              <label class="form-label" for="firstName">First Name</label>
+              <input id="firstName" type="text" class="form-control" placeholder="John" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="lastName">Last Name</label>
+              <input id="lastName" type="text" class="form-control" placeholder="Doe" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signupEmail">Email Address</label>
+            <input id="signupEmail" type="email" class="form-control" placeholder="you@example.com" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signupPassword">Password</label>
+            <input id="signupPassword" type="password" class="form-control" placeholder="Min. 6 characters" required minlength="6" />
+          </div>
+          <div class="two-col">
+            <div class="form-group">
+              <label class="form-label" for="signupGender">Gender</label>
+              <select id="signupGender" class="form-control">
+                <option value="U">Prefer not to say</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="signupAge">Age</label>
+              <input id="signupAge" type="number" class="form-control" placeholder="25" min="10" max="100" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px">Create Account ✨</button>
+        </form>
+        <p class="auth-footer">Already have an account? <a href="#" onclick="showPage('login');return false;">Sign in</a></p>
+      </div>
+    </div>
+  </div><!-- /signup -->
+
+</main>
+
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <span class="logo-text">FASHION RECOMMENDATION SYSTEM</span>
+      <p>AI-powered outfit recommendations — Minor Project</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Pages</h4>
+        <a href="#" onclick="showPage('home');return false;">Home</a>
+        <a href="#" onclick="showPage('recommend');return false;">Recommendations</a>
+        <a href="#" onclick="showPage('about');return false;">About</a>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <a href="#" onclick="showPage('login');return false;">Login</a>
+        <a href="#" onclick="showPage('signup');return false;">Sign Up</a>
+      </div>
+      <div class="footer-col">
+        <h4>Tech Stack</h4>
+        <span>Python · Django</span>
+        <span>ResNet50 · KNN</span>
+        <span>SQLite</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 FASHION RECOMMENDATION SYSTEM — Minor Project</p>
+  </div>
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="static/js/main.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════
+   OUTFIT DATA  — clothing flat-lay images only
+══════════════════════════════════════════════════════ */
+const OUTFITS = [
+  {
+    id:1, name:'Navy Long Sleeve Shirt', occasion:'casual', gender:'M', style:'minimalist',
+    desc:'Classic navy blue long sleeve casual shirt — clean, versatile, everyday essential.',
+    img:'static/images/shirt_navy.png', tags:['Casual','Navy','Long Sleeve']
+  },
+  {
+    id:2, name:'Light Blue Button-Down', occasion:'casual', gender:'M', style:'classic',
+    desc:'Crisp sky blue short sleeve button-down — smart casual for any day.',
+    img:'static/images/shirt_lightblue.png', tags:['Casual','Sky Blue','Button-Down']
+  },
+  {
+    id:3, name:'Maroon Overshirt', occasion:'casual', gender:'M', style:'trendy',
+    desc:'Deep maroon overshirt with white inner — effortlessly stylish layered look.',
+    img:'static/images/shirt_maroon.png', tags:['Casual','Maroon','Overshirt']
+  },
+  {
+    id:4, name:'Teal Casual Shirt', occasion:'casual', gender:'M', style:'trendy',
+    desc:'Rich teal button-down with rolled sleeves — fresh and modern.',
+    img:'static/images/shirt_teal.png', tags:['Casual','Teal','Rolled Sleeves']
+  },
+  {
+    id:5, name:'Navy Formal Shirt', occasion:'formal', gender:'M', style:'classic',
+    desc:'Slim-fit navy shirt for the boardroom — sharp and professional.',
+    img:'static/images/shirt_navy.png', tags:['Formal','Navy','Slim Fit']
+  },
+  {
+    id:6, name:'Sky Blue Smart Casual', occasion:'formal', gender:'M', style:'minimalist',
+    desc:'Light blue smart casual shirt — pairs perfectly with chinos or trousers.',
+    img:'static/images/shirt_lightblue.png', tags:['Formal','Light Blue','Smart Casual']
+  },
+  {
+    id:7, name:'Burgundy Party Shirt', occasion:'party', gender:'M', style:'bold',
+    desc:'Rich burgundy long sleeve overshirt — a bold statement for any party.',
+    img:'static/images/shirt_maroon.png', tags:['Party','Burgundy','Bold']
+  },
+  {
+    id:8, name:'Teal Evening Shirt', occasion:'party', gender:'M', style:'trendy',
+    desc:'Deep teal button-down — stand out at dinners and evening events.',
+    img:'static/images/shirt_teal.png', tags:['Party','Teal','Evening']
+  },
+  {
+    id:9, name:'Classic Navy Weekend', occasion:'casual', gender:'M', style:'minimalist',
+    desc:'Relaxed navy long sleeve shirt — weekend-ready and always in style.',
+    img:'static/images/shirt_navy.png', tags:['Casual','Navy','Weekend']
+  },
+  {
+    id:10, name:'Blue Collar Open Shirt', occasion:'casual', gender:'M', style:'classic',
+    desc:'Soft sky blue open-collar shirt — casual comfort at its finest.',
+    img:'static/images/shirt_lightblue.png', tags:['Casual','Blue','Open Collar']
+  },
+];
+
+/* ══════════════════════════════════════════════════════
+   SPA NAVIGATION
+══════════════════════════════════════════════════════ */
+function showPage(name) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('page-' + name);
+  if (el) { el.classList.add('active'); window.scrollTo({ top:0, behavior:'smooth' }); }
+
+  // nav highlight
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const map = { home:'nav-home', recommend:'nav-rec', about:'nav-about' };
+  const navEl = document.getElementById(map[name]);
+  if (navEl) navEl.classList.add('active');
+
+  if (name === 'recommend') renderOutfits(OUTFITS);
+  if (name === 'home')      renderCarousel();
+}
+
+/* ══════════════════════════════════════════════════════
+   CAROUSEL
+══════════════════════════════════════════════════════ */
+function renderCarousel() {
+  const track = document.getElementById('carouselTrack');
+  if (!track) return;
+  const items = [...OUTFITS, ...OUTFITS]; // duplicate for seamless loop
+  track.innerHTML = items.map(o => `
+    <a href="#" class="carousel-card" onclick="showPage('recommend');return false;" aria-label="${o.name}">
+      <div class="carousel-img-wrap">
+        <img src="${o.img}" alt="${o.name}" loading="lazy"
+             style="object-fit:cover;width:100%;height:100%">
+        <div class="carousel-overlay"><span class="carousel-overlay-link">View Details</span></div>
+        <div class="carousel-badge">${o.style}</div>
+      </div>
+      <div class="carousel-info">
+        <div class="carousel-brand">${cap(o.occasion)}</div>
+        <div class="carousel-name" title="${o.name}">${o.name}</div>
+        <div class="carousel-tags">
+          ${o.tags.map(t=>`<span class="carousel-tag">${t}</span>`).join('')}
+        </div>
+      </div>
+    </a>`).join('');
+}
+
+/* ══════════════════════════════════════════════════════
+   OUTFIT GRID
+══════════════════════════════════════════════════════ */
+function renderOutfits(list) {
+  const grid  = document.getElementById('outfitGrid');
+  const noRes = document.getElementById('noResults');
+  if (!list.length) { grid.innerHTML=''; noRes.style.display='block'; return; }
+  noRes.style.display = 'none';
+  grid.innerHTML = list.map(o => `
+    <div class="outfit-card">
+      <img class="outfit-card-img" src="${o.img}" alt="${o.name}"
+           onerror="this.style.background='var(--bg-tertiary)';this.removeAttribute('src')">
+      <div class="outfit-card-body">
+        <div class="outfit-card-name">${o.name}</div>
+        <div class="outfit-card-desc">${o.desc}</div>
+        <div class="outfit-card-tags">
+          <span class="outfit-card-tag occ">${cap(o.occasion)}</span>
+          <span class="outfit-card-tag">${genderLabel(o.gender)}</span>
+          <span class="outfit-card-tag">${cap(o.style)}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filterOutfits() {
+  const occ   = document.getElementById('fOcc').value;
+  const gen   = document.getElementById('fGen').value;
+  const style = document.getElementById('fStyle').value;
+  let f = OUTFITS;
+  if (occ)   f = f.filter(o => o.occasion === occ);
+  if (gen)   f = f.filter(o => o.gender   === gen);
+  if (style) f = f.filter(o => o.style    === style);
+  renderOutfits(f);
+}
+
+function resetFilters() {
+  ['fOcc','fGen','fStyle'].forEach(id => document.getElementById(id).value = '');
+  renderOutfits(OUTFITS);
+}
+
+/* ══════════════════════════════════════════════════════
+   SEARCH
+══════════════════════════════════════════════════════ */
+function handleSearch(q) {
+  const box = document.getElementById('searchResults');
+  if (!q.trim()) { box.innerHTML=''; box.style.display='none'; return; }
+  const res = OUTFITS.filter(o =>
+    o.name.toLowerCase().includes(q.toLowerCase()) ||
+    o.occasion.toLowerCase().includes(q.toLowerCase()) ||
+    o.tags.some(t => t.toLowerCase().includes(q.toLowerCase()))
+  ).slice(0, 5);
+  if (!res.length) {
+    box.innerHTML = `<div style="padding:12px 14px;font-size:13px;color:var(--text-muted)">No results found</div>`;
+    box.style.display = 'block'; return;
+  }
+  box.innerHTML = res.map(o => `
+    <div style="padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;
+                border-bottom:1px solid var(--border);font-size:13px;transition:background .15s"
+         onmouseenter="this.style.background='var(--bg-secondary)'"
+         onmouseleave="this.style.background=''"
+         onclick="showPage('recommend');document.getElementById('globalSearch').value='';
+                  document.getElementById('searchResults').style.display='none';">
+      <img src="${o.img}" style="width:36px;height:36px;object-fit:cover;border-radius:6px;background:var(--bg-tertiary)">
+      <div>
+        <div style="font-weight:600">${o.name}</div>
+        <div style="color:var(--text-muted)">${cap(o.occasion)} · ${cap(o.style)}</div>
+      </div>
+    </div>`).join('');
+  box.style.display = 'block';
+}
+
+/* ══════════════════════════════════════════════════════
+   AUTH (demo)
+══════════════════════════════════════════════════════ */
+function handleLogin(e) {
+  e.preventDefault();
+  showToast('Logged in successfully! (Demo mode)', 'success');
+  showPage('home');
+}
+function handleSignup(e) {
+  e.preventDefault();
+  showToast('Account created! Welcome to FashionAI 🎉 (Demo mode)', 'success');
+  showPage('home');
+}
+
+/* ══════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════ */
+function showToast(msg, type='info') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.innerHTML = `<span>${msg}</span><button onclick="this.parentElement.remove()">✕</button>`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+/* ══════════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════════ */
+const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+const genderLabel = g => g==='M'?'Male':g==='F'?'Female':'Unisex';
+
+/* ══════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  renderCarousel();
+
+  // Close search on outside click
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#navSearch')) {
+      const box = document.getElementById('searchResults');
+      if (box) { box.innerHTML=''; box.style.display='none'; }
+    }
+  });
+
+  // Hamburger
+  const ham = document.getElementById('hamburger');
+  const links = document.getElementById('navLinks');
+  if (ham && links) ham.addEventListener('click', () => links.classList.toggle('open'));
+});
+</script>
+</body>
+</html>

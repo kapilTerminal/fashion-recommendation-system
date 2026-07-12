@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Get Recommendations — FashionAI{% endblock %}
+
+{% block content %}
+<div class="recommend-page">
+    <div class="recommend-container">
+        <div class="recommend-header">
+            <h1 class="serif" style="font-size:clamp(28px,4vw,44px);margin-top:8px">Find Your Perfect Outfit</h1>
+            <p style="color:var(--text-muted);margin-top:8px">Upload a reference image or choose your preferences below
+            </p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" id="recommendForm">
+            {% csrf_token %}
+
+            <!-- Upload Zone -->
+            <div class="upload-zone" id="uploadZone" style="margin-bottom:32px">
+                <input type="file" id="outfitImageInput" name="outfit_image" accept="image/*">
+                <div class="upload-icon">📸</div>
+                <div class="upload-title">Drop your outfit image here</div>
+                <p class="upload-sub">Or click to browse — JPG, PNG, WEBP accepted</p>
+                <div id="imageError" style="color: #e74c3c; font-size: 0.9em; margin-top: 10px; display: none; font-weight: 500;"></div>
+                <img id="uploadPreview" class="upload-preview" src="" alt="Preview" />
+            </div>
+
+            <!-- Loading Overlay -->
+            <div class="form-loading" id="formLoading">
+                <div class="form-loading-inner">
+                    <div class="spinner-ring"></div>
+                    <p>AI is finding your perfect outfits…</p>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-panel">
+                <h3 class="filter-title">✦ Customize Your Style</h3>
+                <div class="filter-grid">
+                    <div class="form-group" style="margin-bottom:0">
+                        <label class="form-label" for="occasion">Occasion</label>
+                        <select name="occasion" id="occasion" class="form-control">
+                            <option value="">All Occasions</option>
+                            {% for val, label in occasions %}
+                            <option value="{{ val }}" {% if query_params.occasion == val %}selected{% endif %}>{{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <label class="form-label" for="gender">Gender</label>
+                        <select name="gender" id="gender" class="form-control">
+                            <option value="">All</option>
+                            {% for val, label in genders %}
+                            <option value="{{ val }}" {% if query_params.gender == val %}selected{% endif %}>{{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <label class="form-label" for="season">Season</label>
+                        <select name="season" id="season" class="form-control">
+                            <option value="">All Seasons</option>
+                            {% for val, label in seasons %}
+                            <option value="{{ val }}" {% if query_params.season == val %}selected{% endif %}>{{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <label class="form-label" for="color">Color</label>
+                        <select name="color" id="color" class="form-control">
+                            <option value="">Any Color</option>
+                            {% for val, label in colors %}
+                            <option value="{{ val }}" {% if query_params.color == val %}selected{% endif %}>{{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <label class="form-label" for="style">Style</label>
+                        <select name="style" id="style" class="form-control">
+                            <option value="">Any Style</option>
+                            {% for val, label in styles %}
+                            <option value="{{ val }}" {% if query_params.style == val %}selected{% endif %}>{{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+                <div style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+                    <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                        🤖 Generate Recommendations
+                    </button>
+                    <a href="{% url 'recommend' %}" class="btn btn-outline">Clear Filters</a>
+                    <span class="active-filter-badge" id="activeFilterCount" style="display:none"></span>
+                </div>
+            </div>
+        </form>
+
+        <!-- Results -->
+        {% if request.method == 'POST' or results %}
+        <div>
+            <div class="results-header">
+                <h2 class="results-title">✦ Recommended Outfits</h2>
+                <span class="results-count">{{ results|length }} outfit{{ results|length|pluralize }} found</span>
+            </div>
+
+            {% if results %}
+            <div class="results-grid">
+                {% for outfit in results %}
+                {% include 'partials/outfit_card.html' with outfit=outfit %}
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">🔎</div>
+                <p class="empty-text">No outfits matched your filters</p>
+                <p class="empty-sub">Try adjusting your filters or removing some criteria</p>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <!-- Default: Show all outfits as inspiration -->
+        <div style="margin-top:40px">
+            <h2 style="font-size:22px;font-weight:700;margin-bottom:24px">✦ All Outfits Collection</h2>
+            {% if featured_outfits %}
+            <div class="results-grid">
+                {% for outfit in featured_outfits %}
+                {% include 'partials/outfit_card.html' with outfit=outfit %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Active filter count badge
+    function updateFilterBadge() {
+        const selects = document.querySelectorAll('.filter-grid select');
+        let count = 0;
+        selects.forEach(s => { if (s.value) count++; });
+        const badge = document.getElementById('activeFilterCount');
+        if (badge) {
+            if (count > 0) {
+                badge.textContent = count + ' filter' + (count > 1 ? 's' : '') + ' active';
+                badge.style.display = 'inline-flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    }
+    document.querySelectorAll('.filter-grid select').forEach(s => s.addEventListener('change', updateFilterBadge));
+    updateFilterBadge();
+
+    // Form loading overlay
+    const form = document.getElementById('recommendForm');
+    const loadingDiv = document.getElementById('formLoading');
+    form?.addEventListener('submit', () => {
+        if (loadingDiv) loadingDiv.classList.add('show');
+        const btn = document.getElementById('submitBtn');
+        if (btn) { btn.disabled = true; btn.textContent = 'Searching…'; }
+    });
+
+    // Pre-fill filters from URL params (for mood board links)
+    const urlParams = new URLSearchParams(window.location.search);
+    ['occasion', 'gender', 'season', 'color', 'style'].forEach(key => {
+        const val = urlParams.get(key);
+        if (val) {
+            const el = document.getElementById(key);
+            if (el) el.value = val;
+        }
+    });
+    updateFilterBadge();
+
+    // Image Upload Validation
+    const fileInput = document.getElementById('outfitImageInput');
+    const submitBtnObj = document.getElementById('submitBtn');
+    const errorDiv = document.getElementById('imageError');
+    const previewImg = document.getElementById('uploadPreview');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            
+            // Reset state
+            submitBtnObj.disabled = true;
+            errorDiv.style.display = 'none';
+            previewImg.style.display = 'none';
+            
+            if (!file) {
+                // If they cancel upload, they can still submit without an image (for pure filtering)
+                submitBtnObj.disabled = false;
+                return;
+            }
+
+            // Validation
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            if (!validTypes.includes(file.type)) {
+                App.handleFormError('Invalid file type. Please upload a JPG, JPEG, or PNG image.');
+                fileInput.value = ''; // clear input
+                return;
+            }
+
+            if (file.size > maxSize) {
+                App.handleFormError('File is too large. Maximum size is 5MB.');
+                fileInput.value = ''; // clear input
+                return;
+            }
+
+            // Preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                previewImg.style.display = 'block';
+                // Enable button if valid and image loaded
+                submitBtnObj.disabled = false;
+            }
+            reader.onerror = function() {
+                App.handleFormError('Error reading file. The file might be corrupted.');
+                fileInput.value = '';
+            }
+            reader.readAsDataURL(file);
+        });
+    }
+</script>
+{% endblock %}

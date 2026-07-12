@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — FashionAI{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+    <div class="dashboard-container">
+        <!-- Page Header -->
+        <div style="margin-bottom:36px">
+            <span class="section-tag">My Account</span>
+            <h1 class="serif" style="font-size:clamp(28px,3vw,40px);margin-top:8px">Your Fashion Dashboard</h1>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="profile-avatar-lg">
+                {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+            </div>
+            <div class="profile-info">
+                <h2>{{ user.get_full_name|default:user.username }}</h2>
+                <p>{{ user.email }}</p>
+                <div class="profile-meta">
+                    {% if profile %}
+                    {% if profile.age %}
+                    <span class="meta-chip">🎂 {{ profile.age }} yrs</span>
+                    {% endif %}
+                    <span class="meta-chip">
+                        {% if profile.gender == 'M' %}👔 Male
+                        {% elif profile.gender == 'F' %}👗 Female
+                        {% else %}✦ Unisex{% endif %}
+                    </span>
+                    <span class="meta-chip">✦ {{ profile.get_occasion_preference_display }}</span>
+                    {% endif %}
+                    <span class="meta-chip">📦 {{ history|length }} recommendations</span>
+                    <span class="meta-chip">❤️ {{ favorites|length }} favorites</span>
+                </div>
+            </div>
+            <div style="margin-left:auto;flex-shrink:0">
+                <a href="{% url 'recommend' %}" class="btn btn-primary">Get Recommendations</a>
+            </div>
+        </div>
+
+        <!-- Recommendation History -->
+        <div class="dashboard-section">
+            <div class="dash-section-header">
+                <h2 class="dash-section-title">📜 Recently Recommended</h2>
+                <a href="{% url 'recommend' %}" class="btn btn-outline btn-sm">Get More →</a>
+            </div>
+            {% if history %}
+            <div class="outfits-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
+                {% for rec in history %}
+                <div class="outfit-card">
+                    <div class="outfit-img-wrap">
+                        <img src="/dataset/images/{{ rec.outfit.id }}.jpg" alt="{{ rec.outfit.name }}" loading="lazy" data-img-error="true">
+                        <div class="match-badge">{{ rec.outfit.match_percentage }}%</div>
+                    </div>
+                    <div class="outfit-info">
+                        <div class="outfit-name">{{ rec.outfit.name }}</div>
+                        <div class="outfit-meta">
+                            <span>{{ rec.outfit.get_occasion_display }}</span>
+                        </div>
+                        <div style="font-size:11px;color:var(--text-muted);margin-top:6px">
+                            {{ rec.timestamp|date:"M d, Y" }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">🤖</div>
+                <p class="empty-text">No recommendations yet</p>
+                <p class="empty-sub">Head to the recommendations page to get started</p>
+                <a href="{% url 'recommend' %}" class="btn btn-primary" style="margin-top:20px">Get Recommendations</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Saved Favorites -->
+        <div class="dashboard-section">
+            <div class="dash-section-header">
+                <h2 class="dash-section-title">❤️ Saved Favorites</h2>
+                <span style="font-size:14px;color:var(--text-muted)">{{ favorites|length }} saved</span>
+            </div>
+            {% if favorites %}
+            <div class="outfits-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
+                {% for fav in favorites %}
+                <div class="outfit-card">
+                    <div class="outfit-img-wrap">
+                        <img src="/dataset/images/{{ fav.outfit.id }}.jpg" alt="{{ fav.outfit.name }}" loading="lazy" data-img-error="true">
+                        <div class="match-badge">{{ fav.outfit.match_percentage }}%</div>
+                        <div class="outfit-overlay">
+                            <div class="outfit-overlay-actions">
+                                <button class="overlay-btn fav-btn active"
+                                    data-outfit-id="{{ fav.outfit.id }}">❤️</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="outfit-info">
+                        <div class="outfit-name">{{ fav.outfit.name }}</div>
+                        <div class="outfit-meta">
+                            <span>{{ fav.outfit.get_occasion_display }}</span>
+                        </div>
+                        <div class="outfit-tags">
+                            <span class="tag">{{ fav.outfit.get_color_display }}</span>
+                            <span class="tag">{{ fav.outfit.get_style_display }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">🤍</div>
+                <p class="empty-text">No favorites yet</p>
+                <p class="empty-sub">Heart outfits on the recommendations page to save them here</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dataset Status | Stylus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold mb-3">Dataset Integrity Test</h1>
+            <p class="lead text-muted">Verify the dataset is loaded and processed correctly.</p>
+        </div>
+    </div>
+
+    {% if all_loaded %}
+    <div class="alert alert-success d-flex align-items-center mb-5 shadow-sm" role="alert">
+        <i class="fas fa-check-circle fs-3 me-3"></i>
+        <div>
+            <h4 class="alert-heading mb-1">Success! Dataset is fully loaded.</h4>
+            <p class="mb-0">All dataset files and images are properly loaded into the system.</p>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-danger d-flex align-items-center mb-5 shadow-sm" role="alert">
+        <i class="fas fa-exclamation-triangle fs-3 me-3"></i>
+        <div>
+            <h4 class="alert-heading mb-1">Error! Dataset is not fully loaded.</h4>
+            <p class="mb-0">Please check if the database has records and the `Dataset/images` directory contains images.</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <!-- Total Products -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                <div class="card-body p-4 text-center">
+                    <div class="rounded-circle bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="fas fa-tshirt fs-4 text-primary"></i>
+                    </div>
+                    <h5 class="card-title text-muted fw-semibold">Total Products</h5>
+                    <h2 class="display-5 fw-bold text-dark mb-0">{{ total_products }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Categories -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                <div class="card-body p-4 text-center">
+                    <div class="rounded-circle bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="fas fa-tags fs-4 text-success"></i>
+                    </div>
+                    <h5 class="card-title text-muted fw-semibold">Total Categories</h5>
+                    <h2 class="display-5 fw-bold text-dark mb-0">{{ total_categories }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Brands -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                <div class="card-body p-4 text-center">
+                    <div class="rounded-circle bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="fas fa-copyright fs-4 text-warning"></i>
+                    </div>
+                    <h5 class="card-title text-muted fw-semibold">Total Brands</h5>
+                    <h2 class="display-5 fw-bold text-dark mb-0">{{ total_brands }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unique Colors -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                <div class="card-body p-4 text-center">
+                    <div class="rounded-circle bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="fas fa-palette fs-4 text-danger"></i>
+                    </div>
+                    <h5 class="card-title text-muted fw-semibold">Unique Colors</h5>
+                    <h2 class="display-5 fw-bold text-dark mb-0">{{ unique_colors }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unique Seasons -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                <div class="card-body p-4 text-center">
+                    <div class="rounded-circle bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="fas fa-snowflake fs-4 text-info"></i>
+                    </div>
+                    <h5 class="card-title text-muted fw-semibold">Unique Seasons</h5>
+                    <h2 class="display-5 fw-bold text-dark mb-0">{{ unique_seasons }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Images Loaded -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                <div class="card-body p-4 text-center">
+                    <div class="rounded-circle bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="fas fa-images fs-4 text-secondary"></i>
+                    </div>
+                    <h5 class="card-title text-muted fw-semibold">Embeddings / Images</h5>
+                    <h2 class="display-5 fw-bold text-dark mb-0">{{ images_loaded }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

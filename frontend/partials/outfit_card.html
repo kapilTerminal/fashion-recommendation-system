@@ -1,0 +1,44 @@
+{% load static %}
+<div class="outfit-card fade-in">
+    <div class="outfit-img-wrap">
+        <img src="/dataset/images/{{ outfit.id }}.jpg" alt="{{ outfit.name }}" loading="lazy" data-img-error="true">
+        
+        {% if show_match_badge and outfit.match_percentage %}
+        <div class="match-badge">{{ outfit.match_percentage }}% Match</div>
+        {% endif %}
+        
+        <div class="outfit-overlay">
+            <div class="outfit-overlay-actions">
+                <a href="{% url 'recommend' %}" class="overlay-btn">View Details</a>
+                {% if user.is_authenticated %}
+                <button class="overlay-btn fav-btn {% if outfit.id in user_favorites %}active{% endif %}"
+                    data-outfit-id="{{ outfit.id }}">
+                    {% if outfit.id in user_favorites %}❤️{% else %}🤍{% endif %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="outfit-info">
+        <div class="outfit-brand" style="font-size:11px; text-transform:uppercase; color:var(--accent); font-weight:700; margin-bottom:2px; letter-spacing:0.5px">
+            {{ outfit.brand }}
+        </div>
+        <div class="outfit-name" title="{{ outfit.name }}" style="font-size:13px; font-weight:600; line-height:1.3; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">
+            {{ outfit.name }}
+        </div>
+        
+        <div style="font-size:10px; color:var(--text-muted); margin-bottom:6px; line-height:1.2">
+            {{ outfit.master_category }} &middot; {{ outfit.sub_category }} &middot; {{ outfit.gender }}
+        </div>
+        
+        <div class="outfit-meta" style="margin-top:4px">
+            <span style="font-size:11px">{{ outfit.usage }}</span>
+        </div>
+        <div class="outfit-tags" style="margin-top:6px">
+            <span class="tag">{{ outfit.season }}</span>
+            <span class="tag tag-color">{{ outfit.color }}</span>
+            <span class="tag">{{ outfit.article_type }}</span>
+        </div>
+    </div>
+</div>
+

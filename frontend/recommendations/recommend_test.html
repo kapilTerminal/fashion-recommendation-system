@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Recommendation Engine Test | Stylus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-5 fw-bold mb-3">Recommendation Engine Test</h1>
+            <p class="lead text-muted">Upload an image and test the recommendation pipeline.</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 p-4">
+                <form id="recommendTestForm" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Upload Image (Max 5MB, JPG/PNG)</label>
+                        <input type="file" class="form-control" id="outfit_image" name="outfit_image" accept=".jpg,.jpeg,.png">
+                        <div id="imageError" class="text-danger mt-2 small d-none"></div>
+                        <div class="mt-3 text-center d-none" id="imagePreviewContainer">
+                            <img id="imagePreview" src="#" alt="Preview" class="img-fluid rounded shadow-sm" style="max-height: 200px; object-fit: cover;">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Occasion</label>
+                            <select class="form-select" name="occasion">
+                                <option value="">Any</option>
+                                {% for val, label in occasions %}
+                                <option value="{{ val }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Season</label>
+                            <select class="form-select" name="season">
+                                <option value="">Any</option>
+                                {% for val, label in seasons %}
+                                <option value="{{ val }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Gender</label>
+                            <select class="form-select" name="gender">
+                                <option value="">Any</option>
+                                {% for val, label in genders %}
+                                <option value="{{ val }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Color</label>
+                            <select class="form-select" name="color">
+                                <option value="">Any</option>
+                                {% for val, label in colors %}
+                                <option value="{{ val }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Style</label>
+                            <select class="form-select" name="style">
+                                <option value="">Any</option>
+                                {% for val, label in styles %}
+                                <option value="{{ val }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" id="submitBtn" class="btn btn-primary btn-lg rounded-pill fw-bold disabled">
+                            <i class="fas fa-magic me-2"></i>Generate Recommendations
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% if request.method == 'POST' %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-info d-flex justify-content-between align-items-center shadow-sm">
+                <div>
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Processing Time:</strong> {{ processing_time|floatformat:3 }} seconds
+                </div>
+                <div>
+                    <strong>Products Compared:</strong> {{ products_compared }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if results %}
+    <h3 class="mb-4">Top {{ results|length }} Recommendations</h3>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
+        {% for outfit in results %}
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden product-card position-relative">
+                {% if show_match_badge %}
+                <span class="position-absolute top-0 end-0 m-2 badge bg-success shadow-sm" style="z-index: 2;">
+                    {{ outfit.match_percentage }}% Match
+                </span>
+                {% endif %}
+                
+                <div class="product-image-container position-relative bg-light" style="padding-top: 133%;">
+                    <img src="/dataset/images/{{ outfit.id }}.jpg" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" alt="{{ outfit.name }}"
+                         onerror="this.src='https://via.placeholder.com/300x400?text=No+Image'">
+                </div>
+                
+                <div class="card-body p-3">
+                    <div class="text-muted small mb-1">{{ outfit.brand }}</div>
+                    <h6 class="card-title text-truncate mb-2" title="{{ outfit.name }}">{{ outfit.name }}</h6>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-light text-dark border">{{ outfit.article_type }}</span>
+                        <span class="fw-bold text-primary">₹{{ outfit.price }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="display-1 text-muted mb-3"><i class="fas fa-search-minus"></i></div>
+        <h3>No recommendations found</h3>
+        <p class="text-muted">Try uploading a different image or relaxing your filters.</p>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('outfit_image');
+    const submitBtn = document.getElementById('submitBtn');
+    const errorDiv = document.getElementById('imageError');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const previewImg = document.getElementById('imagePreview');
+
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        
+        // Reset state
+        submitBtn.classList.add('disabled');
+        errorDiv.classList.add('d-none');
+        previewContainer.classList.add('d-none');
+        
+        if (!file) return;
+
+        // Validation
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+
+        if (!validTypes.includes(file.type)) {
+            App.handleFormError('Invalid file type. Please upload a JPG, JPEG, or PNG image.');
+            fileInput.value = ''; // clear input
+            return;
+        }
+
+        if (file.size > maxSize) {
+            App.handleFormError('File is too large. Maximum size is 5MB.');
+            fileInput.value = ''; // clear input
+            return;
+        }
+
+        // Preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            previewContainer.classList.remove('d-none');
+            
+            // Enable button if valid and image loaded
+            submitBtn.classList.remove('disabled');
+        }
+        reader.onerror = function() {
+            App.handleFormError('Error reading file. The file might be corrupted.');
+            fileInput.value = '';
+        }
+        reader.readAsDataURL(file);
+    });
+    
+    // Enable button if form is being resubmitted without image change (e.g. just changing filters)
+    // For this test page, we require an image upload to generate recommendations.
+});
+</script>
+{% endblock %}

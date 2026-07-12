@@ -1,0 +1,477 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home — FashionAI{% endblock %}
+{% block meta_description %}Upload your photo, choose your occasion and preferences, and receive personalized outfit
+recommendations powered by artificial intelligence.{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════════════════════════════════════════
+     HERO SECTION
+══════════════════════════════════════════════════ -->
+<section class="hero" id="hero">
+    <div class="hero-container">
+
+        <!-- Left: Copy -->
+        <div class="hero-content" data-aos="fade-right">
+            <div class="hero-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
+                </svg>
+                FASHION RECOMMENDATION SYSTEM
+            </div>
+
+            <h1 class="hero-title serif" id="heroTitle">
+                Your Style,<br>
+                Perfected by <span class="accent">Design</span>
+            </h1>
+
+            <p class="hero-subtitle">
+                Discover your perfect outfit with our smart system. Get
+                personalized suggestions based on your occasion, and unique style.
+            </p>
+
+            <div class="hero-cta">
+                <a href="{% url 'recommend' %}" class="btn btn-primary btn-lg" id="heroCTA">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.35-4.35" />
+                    </svg>
+                    Recommendations
+                </a>
+                <a href="#how-it-works" class="btn btn-outline btn-lg">How It Works</a>
+            </div>
+
+
+        </div>
+
+        <!-- Right: Elegant Fashion Collage -->
+        <div class="hero-visuals" data-aos="fade-left">
+            <div class="hero-collage">
+                <div class="collage-main float-anim-1">
+                    <img src="{% static 'images/hero_dress.png' %}" alt="Elegant Dress" data-img-error="true">
+                    <div class="collage-badge">Smart Style</div>
+                </div>
+                <div class="collage-secondary collage-top float-anim-2">
+                    <img src="{% static 'images/hero_suit.png' %}" alt="Sharp Suit" data-img-error="true">
+                </div>
+                <div class="collage-secondary collage-bottom float-anim-3">
+                    <img src="{% static 'images/hero_casual.png' %}" alt="Casual Wear" data-img-error="true">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     FEATURES SECTION
+══════════════════════════════════════════════════ -->
+<section class="section features-section" id="features">
+    <div class="container">
+        <div class="section-header text-center" data-aos="fade-up">
+            <span class="section-tag">Core Features</span>
+            <h2 class="section-title serif">What Our System Can Do</h2>
+            <p class="section-subtitle" style="margin:0 auto">Powered by deep learning to deliver a premium fashion
+                intelligence experience.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="0">
+                <div class="feature-icon-wrap upload-feat">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="3" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="m21 15-5-5L5 21" />
+                    </svg>
+                </div>
+                <h3 class="feature-title">Upload Your Photo</h3>
+                <p class="feature-desc">Drag and drop or browse any outfit image. Our system accepts JPG, PNG, and WEBP
+                    formats for instant processing.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-icon-wrap brain-feat">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z" />
+                        <path
+                            d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z" />
+                    </svg>
+                </div>
+                <h3 class="feature-title">Smart Feature Extraction</h3>
+                <p class="feature-desc">ResNet50 deep learning model extracts visual features from clothing items,
+                    enabling precise style and pattern matching.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon-wrap outfit-feat">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z" />
+                    </svg>
+                </div>
+                <h3 class="feature-title">Personalized Outfits</h3>
+                <p class="feature-desc">Get ranked outfit recommendations tailored to your occasion, gender, and season,
+                    each with a percentage match score.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-icon-wrap tryon-feat">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        <path d="m9 12 2 2 4-4" />
+                    </svg>
+                </div>
+                <h3 class="feature-title">Virtual Try-On</h3>
+                <p class="feature-desc">Visualize how recommended outfits look on you before making a decision, powered
+                    by Smart overlay technology.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     HOW IT WORKS — HORIZONTAL TIMELINE
+══════════════════════════════════════════════════ -->
+<section class="section how-section" id="how-it-works">
+    <div class="container">
+        <div class="section-header text-center" data-aos="fade-up">
+            <span class="section-tag">7-Step Pipeline</span>
+            <h2 class="section-title serif">How It Works</h2>
+            <p class="section-subtitle" style="margin:0 auto">Seven data processing steps transform the 44,424-image
+                Myntra dataset into personalised outfit recommendations.</p>
+        </div>
+
+        <div class="timeline-wrap">
+            <div class="timeline-line"></div>
+
+            <!-- Step 1: Inspect -->
+            <div class="timeline-step" data-aos="fade-up" data-aos-delay="0">
+                <div class="timeline-num">01</div>
+                <div class="timeline-icon-wrap step-upload">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.35-4.35" />
+                    </svg>
+                </div>
+                <h3 class="timeline-title">Inspect Dataset</h3>
+                <p class="timeline-desc">Validate styles.csv against image folder — find missing &amp; extra files.</p>
+            </div>
+
+            <div class="timeline-connector" data-aos="fade-up" data-aos-delay="60">
+                <svg width="40" height="16" viewBox="0 0 40 16">
+                    <path d="M0 8h32M27 2l8 6-8 6" stroke="currentColor" stroke-width="2" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </div>
+
+            <!-- Step 2: Remove Corrupted -->
+            <div class="timeline-step" data-aos="fade-up" data-aos-delay="110">
+                <div class="timeline-num">02</div>
+                <div class="timeline-icon-wrap step-prefs">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                        <path d="M10 11v6" />
+                        <path d="M14 11v6" />
+                        <path d="M9 6V4h6v2" />
+                    </svg>
+                </div>
+                <h3 class="timeline-title">Remove Corrupted</h3>
+                <p class="timeline-desc">PIL verify() each JPG — drop corrupt &amp; unreadable images from the CSV.</p>
+            </div>
+
+            <div class="timeline-connector" data-aos="fade-up" data-aos-delay="160">
+                <svg width="40" height="16" viewBox="0 0 40 16">
+                    <path d="M0 8h32M27 2l8 6-8 6" stroke="currentColor" stroke-width="2" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </div>
+
+            <!-- Step 3: Remove Duplicates -->
+            <div class="timeline-step" data-aos="fade-up" data-aos-delay="210">
+                <div class="timeline-num">03</div>
+                <div class="timeline-icon-wrap step-ai">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="8" y="8" width="13" height="13" rx="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                </div>
+                <h3 class="timeline-title">Remove Duplicates</h3>
+                <p class="timeline-desc">Deduplicate rows by product ID to ensure clean, unique training samples.</p>
+            </div>
+
+            <div class="timeline-connector" data-aos="fade-up" data-aos-delay="260">
+                <svg width="40" height="16" viewBox="0 0 40 16">
+                    <path d="M0 8h32M27 2l8 6-8 6" stroke="currentColor" stroke-width="2" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </div>
+
+            <!-- Step 4: Handle Missing -->
+            <div class="timeline-step" data-aos="fade-up" data-aos-delay="310">
+                <div class="timeline-num">04</div>
+                <div class="timeline-icon-wrap step-tryon">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                </div>
+                <h3 class="timeline-title">Handle Missing Values</h3>
+                <p class="timeline-desc">Impute or drop null colour, season, gender and usage columns.</p>
+            </div>
+
+            <div class="timeline-connector" data-aos="fade-up" data-aos-delay="360">
+                <svg width="40" height="16" viewBox="0 0 40 16">
+                    <path d="M0 8h32M27 2l8 6-8 6" stroke="currentColor" stroke-width="2" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </div>
+
+            <!-- Step 5: Filter Categories -->
+            <div class="timeline-step" data-aos="fade-up" data-aos-delay="410">
+                <div class="timeline-num">05</div>
+                <div class="timeline-icon-wrap step-upload">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                    </svg>
+                </div>
+                <h3 class="timeline-title">Filter 26 Categories</h3>
+                <p class="timeline-desc">Keep only Tshirts, Shirts, Dresses, Sarees, Jeans, Heels &amp; 20 more article
+                    types.</p>
+            </div>
+
+            <div class="timeline-connector" data-aos="fade-up" data-aos-delay="460">
+                <svg width="40" height="16" viewBox="0 0 40 16">
+                    <path d="M0 8h32M27 2l8 6-8 6" stroke="currentColor" stroke-width="2" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </div>
+
+            <!-- Step 6: Enrich Metadata -->
+            <div class="timeline-step" data-aos="fade-up" data-aos-delay="510">
+                <div class="timeline-num">06</div>
+                <div class="timeline-icon-wrap step-prefs">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                </div>
+                <h3 class="timeline-title">Enrich Metadata</h3>
+                <p class="timeline-desc">Map articleType → style (Casual, Formal, Ethnic…) and occasion (Office, Party,
+                    Wedding…).</p>
+            </div>
+
+            <div class="timeline-connector" data-aos="fade-up" data-aos-delay="560">
+                <svg width="40" height="16" viewBox="0 0 40 16">
+                    <path d="M0 8h32M27 2l8 6-8 6" stroke="currentColor" stroke-width="2" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </div>
+
+            <!-- Step 7: Resize + ResNet50 -->
+            <div class="timeline-step" data-aos="fade-up" data-aos-delay="610">
+                <div class="timeline-num">07</div>
+                <div class="timeline-icon-wrap step-ai">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                </div>
+                <h3 class="timeline-title">Resize &amp; Extract</h3>
+                <p class="timeline-desc">Resize to 224×224 RGB for ResNet50 → KNN finds k nearest feature vectors.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     STATISTICS ROW
+══════════════════════════════════════════════════ -->
+<section class="stats-section" id="stats">
+    <div class="container">
+        <div class="stats-grid">
+            <!-- Actual row count from styles.csv -->
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="0">
+                <div class="stat-icon-wrap">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <ellipse cx="12" cy="5" rx="9" ry="3" />
+                        <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5" />
+                        <path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3" />
+                    </svg>
+                </div>
+                <div class="stat-big" data-target="44424" data-suffix="">0</div>
+                <div class="stat-name">Myntra Images</div>
+                <div class="stat-desc">Raw rows in styles.csv (10 columns)</div>
+            </div>
+            <!-- 26 article types kept after filter step -->
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-icon-wrap">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                    </svg>
+                </div>
+                <div class="stat-big" data-target="26" data-suffix="">0</div>
+                <div class="stat-name">Article Types Kept</div>
+                <div class="stat-desc">Tshirts · Jeans · Dresses · Sarees &amp; 22 more</div>
+            </div>
+            <!-- 9 usage occasions from styles.csv -->
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-icon-wrap">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                </div>
+                <div class="stat-big" data-target="9" data-suffix="">0</div>
+                <div class="stat-name">Usage Occasions</div>
+                <div class="stat-desc">Casual · Ethnic · Formal · Party · Sports &amp; more</div>
+            </div>
+            <!-- ResNet50 224×224 input -->
+            <div class="stat-card stat-card-accent" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-icon-wrap stat-icon-accent">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                </div>
+                <div class="stat-big stat-big-text" style="font-size:clamp(22px,3vw,38px);letter-spacing:-1px">224²
+                </div>
+                <div class="stat-name">ResNet50 Input</div>
+                <div class="stat-desc">RGB images resized to 224×224 px</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     OUTFIT CAROUSEL
+══════════════════════════════════════════════════ -->
+<section class="section carousel-section" id="preview">
+    <div class="container">
+        <div class="section-header flex-between" style="margin-bottom:40px" data-aos="fade-up">
+            <div>
+                <h2 class="section-title serif" style="margin:8px 0 0">Featured Outfits</h2>
+            </div>
+            <a href="{% url 'recommend' %}" class="btn btn-outline">Explore All →</a>
+        </div>
+    </div>
+
+    <!-- Full-width carousel viewport (no container constraint) -->
+    <div class="carousel-viewport" id="carouselViewport" aria-label="Outfit carousel" role="region">
+        <div class="carousel-track" id="carouselTrack">
+
+            {% for outfit in featured_outfits %}
+            <!-- Original set -->
+            <a href="{% url 'recommend' %}" class="carousel-card" data-outfit-id="{{ outfit.id }}"
+                aria-label="{{ outfit.name }}">
+                <div class="carousel-img-wrap">
+                    <img src="/dataset/images/{{ outfit.id }}.jpg" alt="{{ outfit.name }}" loading="lazy"
+                        data-img-error="true">
+                    <div class="carousel-overlay">
+                        <span class="carousel-overlay-link">View Details</span>
+                    </div>
+                    <div class="carousel-badge">
+                        {{ outfit.article_type }}
+                    </div>
+                </div>
+                <div class="carousel-info">
+                    <div class="carousel-brand">{{ outfit.brand }}</div>
+                    <div class="carousel-name" title="{{ outfit.name }}">{{ outfit.name }}</div>
+                    <div class="carousel-tags">
+                        <span class="carousel-tag">{{ outfit.season }}</span>
+                        <span class="carousel-tag">{{ outfit.color }}</span>
+                        <span class="carousel-tag">{{ outfit.usage }}</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+
+            {% for outfit in featured_outfits %}
+            <!-- Duplicate set for seamless infinite loop -->
+            <a href="{% url 'recommend' %}" class="carousel-card" aria-hidden="true" tabindex="-1"
+                data-outfit-id="{{ outfit.id }}">
+                <div class="carousel-img-wrap">
+                    <img src="/dataset/images/{{ outfit.id }}.jpg" alt="{{ outfit.name }}" loading="lazy"
+                        data-img-error="true">
+                    <div class="carousel-overlay">
+                        <span class="carousel-overlay-link">View Details</span>
+                    </div>
+                    <div class="carousel-badge">
+                        {{ outfit.article_type }}
+                    </div>
+                </div>
+                <div class="carousel-info">
+                    <div class="carousel-brand">{{ outfit.brand }}</div>
+                    <div class="carousel-name" title="{{ outfit.name }}">{{ outfit.name }}</div>
+                    <div class="carousel-tags">
+                        <span class="carousel-tag">{{ outfit.season }}</span>
+                        <span class="carousel-tag">{{ outfit.color }}</span>
+                        <span class="carousel-tag">{{ outfit.usage }}</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+
+            {% if not featured_outfits %}
+            <!-- Fallback placeholders shown only when DB is empty -->
+            {% for i in "12345" %}
+            <div class="carousel-card" style="pointer-events:none">
+                <div class="carousel-img-wrap" style="background:var(--bg-tertiary)"></div>
+                <div class="carousel-info">
+                    <div class="carousel-brand">Loading…</div>
+                    <div class="carousel-name">Fashion Item</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+        </div><!-- /track -->
+    </div><!-- /viewport -->
+</section>
+
+
+
+<!-- ═══════════════════════════════════════════════
+     CTA BANNER
+══════════════════════════════════════════════════ -->
+<section class="cta-banner-section">
+    <div class="container">
+        <div class="cta-banner-inner">
+            <div class="cta-banner-content" data-aos="fade-up">
+                <span class="section-tag"
+                    style="color:rgba(200,169,110,0.9); background:rgba(200,169,110,0.1); border:1px solid rgba(200,169,110,0.25)">Get
+                    Started</span>
+                <h2 class="serif" style="font-size:clamp(28px,4vw,48px);color:#fff;margin:16px 0 12px;line-height:1.15">
+                    Your Style,<br>
+                    <span style="color:var(--accent)">Perfected by Design</span>
+                </h2>
+                <p
+                    style="color:rgba(255,255,255,0.6);max-width:480px;margin:0 auto 36px;font-size:16px;line-height:1.7">
+                    Upload your photo, set your preferences, and let our Smart system do the styling — in seconds.
+                </p>
+                <div class="flex-center gap-16">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'recommend' %}" class="btn btn-accent btn-lg">Find My Outfit</a>
+                    <a href="{% url 'dashboard' %}" class="btn btn-sm"
+                        style="color:white;border:1px solid rgba(255,255,255,0.3)">My Dashboard</a>
+                    {% else %}
+                    <a href="{% url 'signup' %}" class="btn btn-accent btn-lg">Get Started Free</a>
+                    <a href="{% url 'login' %}" class="btn btn-sm"
+                        style="color:white;border:1px solid rgba(255,255,255,0.3)">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="cta-banner-deco" aria-hidden="true">
+                <div class="deco-circle deco-1"></div>
+                <div class="deco-circle deco-2"></div>
+                <div class="deco-circle deco-3"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

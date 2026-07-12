@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Login — FashionAI{% endblock %}
+{% block meta_description %}Sign in to your FashionAI account.{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <span style="font-size:32px;">✦</span>
+            <h1 class="auth-title serif">Welcome Back</h1>
+            <p class="auth-subtitle">Sign in to get your personalized recommendations</p>
+        </div>
+
+        <form method="post" id="loginForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input id="email" name="email" type="email" class="form-control" placeholder="you@example.com" required
+                    autocomplete="email" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input id="password" name="password" type="password" class="form-control" placeholder="••••••••"
+                    required autocomplete="current-password" />
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px">
+                Sign In →
+            </button>
+        </form>
+
+        <div class="form-divider"><span>or continue with</span></div>
+
+        <div class="auth-switch">
+            Don't have an account? <a href="{% url 'signup' %}">Sign up free</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (!email || !password) {
+        e.preventDefault();
+        App.handleFormError('Please fill in all fields');
+    }
+});
+</script>
+{% endblock %}
